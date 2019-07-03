@@ -1,0 +1,14 @@
+---
+studip_host: 192.168.98.107
+studip_version: 4.3
+studip_archive_url: https://sourceforge.net/projects/studip/files/Stud.IP/4.3/studip-4.3.tar.bz2/download
+
+download_dir: '/home/vagrant'
+studip_install_dir: '/usr/local/studip'
+studip_base_dir: '{{studip_install_dir}}/{{studip_version}}'
+
+mariadb_port: 3306
+studip_db:
+  name: studip
+  user: studip
+  password: studip

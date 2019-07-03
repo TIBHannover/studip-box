@@ -1,0 +1,130 @@
+---
+  - name: php - install base packages
+    apt:
+      name: ["php", "php-mysql", "php-gettext", "php-curl", "php-gd", "php-mbstring", "php-xsl", "php-xml", "php-dom", "php-zip"]
+      state: "present"
+    become: yes
+    tags:
+    - packages
+    - root-task
+
+  - name: download studip sources
+    get_url:
+      url: '{{studip_archive_url}}'
+      dest: "{{download_dir}}/studip.tar.bz2"
+      timeout: 60
+
+  - name: create studip install-dir
+    file:
+      path: "{{studip_install_dir}}"
+      state: "directory"
+      owner: "www-data"
+      group: "www-data"
+      mode: "+rx"
+    become: yes
+    tags:
+    - root-task
+
+  - name: extract studip sources
+    unarchive:
+      remote_src: yes
+      src: '{{download_dir}}/studip.tar.bz2'
+      dest: '{{studip_install_dir}}'
+      creates: '{{studip_base_dir}}'
+      owner: "www-data"
+      group: "www-data"
+    become: yes
+    tags:
+    - root-task
+
+  - name: copy config.inc.php
+    copy:
+      src: "{{studip_base_dir}}/config/config.inc.php.dist"
+      dest: "{{studip_base_dir}}/config/config.inc.php"
+      remote_src: yes
+    become: yes
+    tags:
+    - root-task
+
+  - name: copy config_local.inc.php
+    copy:
+      src: "{{studip_base_dir}}/config/config_local.inc.php.dist"
+      dest: "{{studip_base_dir}}/config/config_local.inc.php"
+      remote_src: yes
+    become: yes
+    tags:
+    - root-task
+
+  - name: edit DB_STUDIP_USER in config_local.inc.php
+    lineinfile:
+      path: '{{studip_base_dir}}/config/config_local.inc.php'
+      line: '$DB_STUDIP_USER = "{{studip_db.user}}";'
+      regexp: '$DB_STUDIP_USER'
+    become: yes
+    tags:
+    - root-task
+
+  - name: edit DB_STUDIP_PASSWORD in config_local.inc.php
+    lineinfile:
+      path: '{{studip_base_dir}}/config/config_local.inc.php'
+      line: '$DB_STUDIP_PASSWORD = "{{studip_db.password}}";'
+      regexp: '$DB_STUDIP_PASSWORD'
+    become: yes
+    tags:
+    - root-task
+
+  - name: import database schema
+    mysql_db:
+      name: '{{studip_db.name}}'
+      state: import
+      target: '{{studip_base_dir}}/db/studip.sql'
+    become: yes
+    tags:
+    - root-task
+
+  - name: import root user
+    mysql_db:
+      name: '{{studip_db.name}}'
+      state: import
+      target: '{{studip_base_dir}}/db/studip_root_user.sql'
+    become: yes
+    tags:
+    - root-task
+
+  - name: import default data
+    mysql_db:
+      name: '{{studip_db.name}}'
+      state: import
+      target: '{{studip_base_dir}}/db/studip_default_data.sql'
+    become: yes
+    tags:
+    - root-task
+
+  - name: import resources default data
+    mysql_db:
+      name: '{{studip_db.name}}'
+      state: import
+      target: '{{studip_base_dir}}/db/studip_resources_default_data.sql'
+    become: yes
+    tags:
+    - root-task
+
+  - name: import test data
+    mysql_db:
+      name: '{{studip_db.name}}'
+      state: import
+      target: '{{studip_base_dir}}/db/studip_demo_data.sql'
+    become: yes
+    tags:
+    - root-task
+    - demo-data
+
+  - name: import resources test data
+    mysql_db:
+      name: '{{studip_db.name}}'
+      state: import
+      target: '{{studip_base_dir}}/db/studip_resources_demo_data.sql'
+    become: yes
+    tags:
+    - root-task
+    - demo-data
