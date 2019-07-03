@@ -59,7 +59,7 @@
     lineinfile:
       path: '{{studip_base_dir}}/config/config_local.inc.php'
       line: '$DB_STUDIP_USER = "{{studip_db.user}}";'
-      regexp: '$DB_STUDIP_USER'
+      regexp: '\$DB_STUDIP_USER'
     become: yes
     tags:
     - root-task
@@ -68,7 +68,7 @@
     lineinfile:
       path: '{{studip_base_dir}}/config/config_local.inc.php'
       line: '$DB_STUDIP_PASSWORD = "{{studip_db.password}}";'
-      regexp: '$DB_STUDIP_PASSWORD'
+      regexp: '\$DB_STUDIP_PASSWORD'
     become: yes
     tags:
     - root-task
