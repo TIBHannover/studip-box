@@ -8,6 +8,9 @@
     - packages
     - root-task
 
+  - name: Ensures download dir exists
+    file: path={{download_dir}}/ state=directory
+
   - name: download studip sources
     get_url:
       url: '{{studip_archive_url}}'
