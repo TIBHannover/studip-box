@@ -1,9 +1,37 @@
 ---
+  - name: add packages.sury.org/php public_key
+    apt_key:
+      url: https://packages.sury.org/php/apt.gpg
+    when: ansible_distribution == 'Debian'
+    tags:
+    - packages
+    - root-task
+
+  - name: php - add repository
+    apt_repository:
+      repo: 'deb https://packages.sury.org/php/ {{ansible_distribution_release}} main'
+      filename: php
+      update_cache: yes
+    when: ansible_distribution == 'Debian'
+    tags:
+    - packages
+    - root-task
+
+  - name: php - install base packages
+    apt:
+      name: ['php7.2', 'php7.2-mysql', 'php7.2-gettext', 'php7.2-curl', 'php7.2-gd', 'php7.2-mbstring', 'php7.2-xsl', 'php7.2-xml', 'php7.2-dom', 'php7.2-zip']
+      state: "present"
+    when: ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 10
+    tags:
+    - packages
+    - root-task
+
   - name: php - install base packages
     apt:
       name: ["php", "php-mysql", "php-gettext", "php-curl", "php-gd", "php-mbstring", "php-xsl", "php-xml", "php-dom", "php-zip"]
       state: "present"
     become: yes
+    when: ansible_distribution != 'Debian' or ansible_lsb.major_release|int < 10
     tags:
     - packages
     - root-task
