@@ -7,7 +7,7 @@ Dieses Projekt bietet die Möglichkeit, ein studip mit minimalem Aufwand in eine
 
 Die folgenden Schritte im Terminal (Linux/macOS) oder in der GitBash (Windows) ausführen.
 ```
-git clone https://git.tib.eu/boxes/studip-box.git
+git clone https://github.com/TIBHannover/studip-box.git
 cd studip-box
 vagrant up
 ```
