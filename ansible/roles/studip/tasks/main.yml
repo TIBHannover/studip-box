@@ -2,7 +2,7 @@
   - name: add packages.sury.org/php public_key
     apt_key:
       url: https://packages.sury.org/php/apt.gpg
-    when: ansible_distribution == 'Debian'
+    when: ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 10
     tags:
     - packages
     - root-task
@@ -12,7 +12,7 @@
       repo: 'deb https://packages.sury.org/php/ {{ansible_distribution_release}} main'
       filename: php
       update_cache: yes
-    when: ansible_distribution == 'Debian'
+    when: ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 10
     tags:
     - packages
     - root-task
